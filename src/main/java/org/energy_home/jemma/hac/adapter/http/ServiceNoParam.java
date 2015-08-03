@@ -40,99 +40,86 @@ import org.slf4j.LoggerFactory;
 
 public class ServiceNoParam extends HttpServlet {
 
-	private final static Logger LOG=LoggerFactory.getLogger(ServiceNoParam.class.getName());
+	private final static Logger LOG = LoggerFactory.getLogger(ServiceNoParam.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	private HttpServletBinder httpAdapter = null;
 	int offset;
 	private boolean log = false;
-	
+
 	public Properties props;
 
 	public ServiceNoParam(HttpServletBinder httpAdapter, String prefix, Properties props) {
 		this.httpAdapter = httpAdapter;
 		offset = prefix.length();
-		
+
 		this.props = props;
 	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String content = streamToString(req.getInputStream());
-		
+
 		try {
 			JSONObject response = new JSONObject();
 
-			if (props != null){
+			if (props != null) {
 				response.put("EnergiaProdottaGiornalieroSimul", props.getProperty("EnergiaProdottaGiornalieroSimul"));
 			} else {
 				response.put("none", 0);
 			}
 			resp.getOutputStream().print(response.toString());
 		} catch (JSONException e) {
-			LOG.error("Error creating JSON object",e);
+			LOG.error("Error creating JSON object", e);
 		} catch (Exception e) {
-			LOG.error("Error creating JSON object",e);
+			LOG.error("Error creating JSON object", e);
 		}
-		
+
 		/*
-		try {
-			JSONObject rpcObject = new JSONObject(content);
-			String methodName = rpcObject.getString("method");
-			String id = rpcObject.getString("id");
-
-			JSONArray paramsArray = rpcObject.getJSONArray("params");
-			ArrayList paramValues = new ArrayList();
-
-			JSONObject response = new JSONObject();
-
-			response.put("id", id);
-
-			Object targetObject = null;
-
-			try {
-				String targetPath = req.getPathInfo().substring(1);
-				targetObject = httpAdapter.getObjectByPid(targetPath);
-
-				if (targetObject == null) {
-					response.put("result", JSONObject.NULL);
-					response.put("error", "ERROR: unable to find target object " + targetPath);
-					resp.getOutputStream().print(response.toString());
-					return;
-				}
-
-				if ((targetObject instanceof IAppliance) && (targetObject != httpAdapter.getImplementor())) {
-					IAppliance ac = (IAppliance) targetObject;
-					paramValues.add(ac.getPid());
-					targetObject = httpAdapter.getImplementor();
-				}
-
-				for (int i = 0; i < paramsArray.length(); i++) {
-					paramValues.add(paramsArray.get(i));
-				}
-
-			} catch (Exception e) {
-				fillResponse(response, e);
-				resp.getOutputStream().print(response.toString());
-			}
-
-			try {
-				Object result = httpAdapter.invokeMethod(targetObject, methodName, paramValues);
-				response.put("result", result);
-				response.put("error", JSONObject.NULL);
-				resp.getOutputStream().print(response.toString());
-				return;
-			} catch (Exception e) {
-				if (log) {
-					System.out.println("[JSonRpc] EXCEPTION: su methodName = " + methodName + ' ' + e.getMessage());
-				}
-				
-				fillResponse(response, e);
-				response.put("result", JSONObject.NULL);
-				resp.getOutputStream().print(response.toString());
-			}
-		} catch (JSONException jsonException) {
-			throw new RuntimeException(jsonException);
-		}*/
+		 * try { JSONObject rpcObject = new JSONObject(content); String
+		 * methodName = rpcObject.getString("method"); String id =
+		 * rpcObject.getString("id");
+		 * 
+		 * JSONArray paramsArray = rpcObject.getJSONArray("params"); ArrayList
+		 * paramValues = new ArrayList();
+		 * 
+		 * JSONObject response = new JSONObject();
+		 * 
+		 * response.put("id", id);
+		 * 
+		 * Object targetObject = null;
+		 * 
+		 * try { String targetPath = req.getPathInfo().substring(1);
+		 * targetObject = httpAdapter.getObjectByPid(targetPath);
+		 * 
+		 * if (targetObject == null) { response.put("result", JSONObject.NULL);
+		 * response.put("error", "ERROR: unable to find target object " +
+		 * targetPath); resp.getOutputStream().print(response.toString());
+		 * return; }
+		 * 
+		 * if ((targetObject instanceof IAppliance) && (targetObject !=
+		 * httpAdapter.getImplementor())) { IAppliance ac = (IAppliance)
+		 * targetObject; paramValues.add(ac.getPid()); targetObject =
+		 * httpAdapter.getImplementor(); }
+		 * 
+		 * for (int i = 0; i < paramsArray.length(); i++) {
+		 * paramValues.add(paramsArray.get(i)); }
+		 * 
+		 * } catch (Exception e) { fillResponse(response, e);
+		 * resp.getOutputStream().print(response.toString()); }
+		 * 
+		 * try { Object result = httpAdapter.invokeMethod(targetObject,
+		 * methodName, paramValues); response.put("result", result);
+		 * response.put("error", JSONObject.NULL);
+		 * resp.getOutputStream().print(response.toString()); return; } catch
+		 * (Exception e) { if (log) {
+		 * System.out.println("[JSonRpc] EXCEPTION: su methodName = " +
+		 * methodName + ' ' + e.getMessage()); }
+		 * 
+		 * fillResponse(response, e); response.put("result", JSONObject.NULL);
+		 * resp.getOutputStream().print(response.toString()); } } catch
+		 * (JSONException jsonException) { throw new
+		 * RuntimeException(jsonException); }
+		 */
 	}
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

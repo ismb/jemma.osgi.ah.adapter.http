@@ -15,7 +15,6 @@
  */
 package org.energy_home.jemma.hac.adapter.http;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -76,7 +75,7 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 
 	private UserAdmin userAdmin;
 
-	private static final Logger LOG = LoggerFactory.getLogger( AhHttpAdapter.class );
+	private static final Logger LOG = LoggerFactory.getLogger(AhHttpAdapter.class);
 
 	private CustomJsonServlet customJSONServlet;
 
@@ -85,7 +84,7 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 	public AhHttpAdapter(HttpImplementor implementor) {
 		this.implementor = implementor;
 	}
-	
+
 	public AhHttpAdapter(HttpImplementor implementor, String alias) {
 		this.implementor = implementor;
 		String separator = "";
@@ -95,7 +94,7 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 		this.jsonServletUrl = alias + separator + "post-json";
 		this.jsonRpcUrl = alias + separator + "jsonrpc";
 	}
-	
+
 	public void bind(HttpImplementor implementor) {
 		this.implementor = implementor;
 	}
@@ -161,9 +160,9 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 			httpService.registerServlet(jsonRpcUrl, jsonRpcServlet, null, httpContext);
 
 		} catch (ServletException e) {
-			LOG.error("Servlet Exception, unable to register servlets",e);
+			LOG.error("Servlet Exception, unable to register servlets", e);
 		} catch (NamespaceException e) {
-			LOG.error("NameSpace Exception, unable to register servlets",e);
+			LOG.error("NameSpace Exception, unable to register servlets", e);
 		}
 		LOG.debug("registered http resources");
 	}
@@ -186,8 +185,7 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 		LOG.debug("unregistered http resources");
 	}
 
-	public Object invokeMethod(Object targetObject, String methodName, ArrayList paramValues) throws IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	public Object invokeMethod(Object targetObject, String methodName, ArrayList paramValues) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		int params = paramValues.size();
 
 		Method[] methods = targetObject.getClass().getMethods();
@@ -246,7 +244,7 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 									try {
 										v.add(outer.get(k));
 									} catch (JSONException e) {
-										LOG.error("Error creating JSON Object",e);
+										LOG.error("Error creating JSON Object", e);
 									}
 								}
 
@@ -370,8 +368,7 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 		} else if (o instanceof ILocation) {
 			ILocation location = (ILocation) o;
 			// log.debug("traduco " + location.getName());
-			out = "{ " + "\"name\": \"" + _(location.getName()) + "\", " + "\"icon\": \"" + location.getIconName() + "\", "
-					+ "\"pid\": \"" + location.getPid() + "\"" + "}";
+			out = "{ " + "\"name\": \"" + _(location.getName()) + "\", " + "\"icon\": \"" + location.getIconName() + "\", " + "\"pid\": \"" + location.getPid() + "\"" + "}";
 		} else if (o instanceof IAppliance) {
 			out += "\"" + ((IAppliance) o).getPid() + "\"";
 		} else if (o instanceof IServiceCluster) {
@@ -418,12 +415,14 @@ public class AhHttpAdapter implements EventHandler, HttpServletBinder, HttpImple
 	}
 
 	public void handleEvent(Event event) {
-		//TODO Hardcoded event topic: we should cross-check across the project where these are stored. Is it worth centralizing event topics somewhere ? e.g. in the API ?
+		// TODO Hardcoded event topic: we should cross-check across the project
+		// where these are stored. Is it worth centralizing event topics
+		// somewhere ? e.g. in the API ?
 		if (event.getTopic() == "org/telecomitalia/HacEvent/NEW_APPLIANCE") {
 			try {
 				queue.put(event);
 			} catch (InterruptedException e) {
-				LOG.error("Interrupted put in BlockingQueue",e);
+				LOG.error("Interrupted put in BlockingQueue", e);
 			}
 		} else {
 			LOG.trace("received event: " + event.getTopic());
